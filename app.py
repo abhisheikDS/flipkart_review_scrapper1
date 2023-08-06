@@ -1,5 +1,4 @@
 from flask import Flask, render_template, request,jsonify
-from flask_cors import CORS,cross_origin
 import requests
 from bs4 import BeautifulSoup as bs
 from urllib.request import urlopen as uReq
@@ -34,10 +33,7 @@ def index():
             print(prod_html)
             commentboxes = prod_html.find_all('div', {'class': "_16PBlm"})
 
-        #     filename = searchString + ".csv"
-        #     fw = open(filename, "w")
-        #     headers = "Product, Customer Name, Rating, Heading, Comment \n"
-        #     fw.write(headers)
+
             reviews = []
             for commentbox in commentboxes:
                 try:
@@ -76,27 +72,14 @@ def index():
                 
             logging.info("log my final result {}".format(reviews))
 
-        #     from pymongo import MongoClient
-        #     uri = "mongodb+srv://dimpal:dimpal@cluster0.tgo7udq.mongodb.net/?retryWrites=true&w=majority"
-        #     # Create a new client and connect to the server
-        #     client = MongoClient(uri)
-        #     # Send a ping to confirm a successful connection
-        #     try:
-        #         client.admin.command('ping')
-        #         print("Pinged your deployment. You successfully connected to MongoDB!")
-        #     except Exception as e:
-        #         print(e)
-
-        #     db =  client['scrapper_flipkart_review']
-        #     coll = db['scrapper_review']
-        #     coll.insert_many(reviews)
+    
             df = pd.DataFrame(reviews)
             df.to_csv("flipkart_data.csv")
             return render_template('result.html', reviews=reviews[0:(len(reviews)-1)])
         except Exception as e:
             logging.info(e)
             return 'something is wrong'
-    # return render_template('results.html')
+
 
     else:
         return render_template('index.html')
